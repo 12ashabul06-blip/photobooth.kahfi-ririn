@@ -13,6 +13,71 @@ const canvas = document.getElementById("photoCanvas");
 let cameraStream = null;
 let facingMode = "user";
 
+
+// SISTEM FOTO DUA TAHAP
+let currentStep = 1;
+let photoTop = null;
+let photoBottom = null;
+let finalPhotoURL = null;
+
+// AREA FOTO
+const photoArea = document.querySelector(".camera-area");
+
+// TEMPAT FOTO ATAS
+const topPhoto = document.createElement("img");
+topPhoto.style.cssText = `
+  position:absolute;
+  left:7%;
+  top:10.4%;
+  width:86%;
+  height:29.8%;
+  object-fit:cover;
+  display:none;
+  z-index:3;
+`;
+
+// TEMPAT FOTO BAWAH
+const bottomPhoto = document.createElement("img");
+bottomPhoto.style.cssText = `
+  position:absolute;
+  left:7%;
+  top:41%;
+  width:86%;
+  height:32.5%;
+  object-fit:cover;
+  display:none;
+  z-index:3;
+`;
+
+// HASIL AKHIR
+const finalPreview = document.createElement("img");
+finalPreview.style.cssText = `
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  display:none;
+  z-index:5;
+`;
+
+photoArea.append(topPhoto, bottomPhoto, finalPreview);
+
+// TOMBOL ULANGI
+const retakeButton = document.createElement("button");
+retakeButton.textContent = "ULANGI FOTO";
+retakeButton.style.display = "none";
+
+// TOMBOL DOWNLOAD
+const downloadButton = document.createElement("button");
+downloadButton.textContent = "DOWNLOAD FOTO";
+downloadButton.style.display = "none";
+
+document.querySelector(".controls").append(
+  retakeButton,
+  downloadButton
+);
+
 // STATUS
 const status = document.createElement("p");
 status.style.cssText =
