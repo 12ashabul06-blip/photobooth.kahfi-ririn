@@ -173,48 +173,131 @@ function drawCamera(ctx) {
 }
 
 // TAKE PHOTO
+async function // FOTO DUA TAHAP
 async function capturePhoto() {
   if (!cameraStream || !camera.videoWidth) {
     showStatus("Aktifkan kamera terlebih dahulu.");
     return;
   }
 
-  try {
-    canvas.width = 1080;
-    canvas.height = 1920;
+  const shotCanvas = document.createElement("canvas");
+  shotCanvas.width = 1080;
+  shotCanvas.height = 1920;
 
-    const ctx = canvas.getContext("2d");
+  const ctx = shotCanvas.getContext("2d");
+  const ratio = 9 / 16;
+  const videoRatio = camera.videoWidth / camera.videoHeight;
 
-    drawCamera(ctx);
+  let sx = 0, sy = 0;
+  let sw = camera.videoWidth;
+  let sh = camera.videoHeight;
 
-    // ADD WEDDING FRAME
-    if (frame.complete && frame.naturalWidth > 0) {
-      ctx.drawImage(frame, 0, 0, 1080, 1920);
-    }
+  if (videoRatio > ratio) {
+    sw = camera.videoHeight * ratio;
+    sx = (camera.videoWidth - sw) / 2;
+  } else {
+    sh = camera.videoWidth / ratio;
+    sy = (camera.videoHeight - sh) / 2;
+  }
 
-    canvas.toBlob(blob => {
-      if (!blob) {
-        showStatus("Gagal membuat foto.");
-        return;
-      }
+  ctx.translate(1080, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(camera, sx, sy, sw, sh, 0, 0, 1080, 1920);
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+  const photoData = shotCanvas.toDataURL("image/jpeg", 0.95);
 
-      link.href = url;
-      link.download = "Kahfi-Ririn-Our-Story.png";
-      link.click();
+  if (currentStep === 1) {
+    photoTop = photoData;
+    topPhoto.src = photoTop;
+    topPhoto.style.display = "block";
 
-      setTimeout(() => URL.revokeObjectURL(url), 3000);
+    currentStep = 2;
+    showStatus("Foto pertama berhasil! Sekarang ambil foto kedua.");
+    captureButton.textContent = "AMBIL FOTO KEDUA";
 
-      showStatus("Foto berhasil disimpan!");
-    }, "image/png");
+  } else {
+    photoBottom = photoData;
+    bottomPhoto.src = photoBottom;
+    bottomPhoto.style.display = "block";
 
-  } catch (error) {
-    console.error(error);
-    showStatus("Terjadi kesalahan saat mengambil foto.");
+    camera.style.display = "none";
+    captureButton.style.display = "none";
+    startButton.style.display = "none";
+    switchButton.style.display = "none";
+
+    retakeButton.style.display = "block";
+    downloadButton.style.display = "block";
+
+    showStatus("Kedua foto berhasil! Periksa hasilnya.");
+    stopCamera();
   }
 }
+
+// ULANGI FOTO
+retakeButton.addEventListener("click", () => {
+  photoTop = null;
+  photoBottom = null;
+  currentStep = 1;
+
+  topPhoto.src = "";
+  bottomPhoto.src = "";
+  topPhoto.style.display = "none";
+  bottomPhoto.style.display = "none";
+
+  retakeButton.style.display = "none";
+  downloadButton.style.display = "none";
+
+  camera.style.display = "block";
+  captureButton.style.display = "block";
+  startButton.style.display = "block";
+  switchButton.style.display = "block";
+
+  captureButton.textContent = "AMBIL FOTO PERTAMA";
+  showStatus("Silakan ambil foto pertama.");
+  startCamera();
+});
+
+// DOWNLOAD HASIL
+downloadButton.addEventListener("click", async () => {
+  if (!photoTop || !photoBottom) return;
+
+  const resultCanvas = document.createElement("canvas");
+  resultCanvas.width = 1080;
+  resultCanvas.height = 1920;
+
+  const ctx = resultCanvas.getContext("2d");
+
+  const loadImage = src => new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.src = src;
+  });
+
+  const upper = await loadImage(photoTop);
+  const lower = await loadImage(photoBottom);
+
+  // Bingkai asli
+  if (frame.complete && frame.naturalWidth > 0) {
+    ctx.drawImage(frame, 0, 0, 1080, 1920);
+  }
+
+  // Foto atas dan bawah
+  ctx.drawImage(upper, 76, 200, 928, 568);
+  ctx.drawImage(lower, 76, 790, 928, 620);
+
+  resultCanvas.toBlob(blob => {
+    if (!blob) return;
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Kahfi-Ririn-Our-Story.png";
+    link.click();
+
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    showStatus("Foto berhasil diunduh!");
+  }, "image/png");
+});
 
 // BUTTON EVENTS
 startButton.addEventListener("click", startCamera);
