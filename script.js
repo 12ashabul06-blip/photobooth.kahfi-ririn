@@ -172,8 +172,7 @@ function drawCamera(ctx) {
   );
 }
 
-// TAKE PHOTO
-async function // FOTO DUA TAHAP
+// FOTO DUA TAHAP
 async function capturePhoto() {
   if (!cameraStream || !camera.videoWidth) {
     showStatus("Aktifkan kamera terlebih dahulu.");
