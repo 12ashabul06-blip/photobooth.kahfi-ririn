@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#142238">
+
+  <title>Our Story | Kahfi & Ririn</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main class="photobooth">
+
+    <header class="header">
+      <h1>OUR STORY</h1>
+      <p>KAHFI & RIRIN</p>
+    </header>
+
+    <section class="camera-area">
+
+      <video id="camera" autoplay playsinline></video>
+
+      <img
+        id="frame"
+        src="assets/our-story-frame.png"
+        alt="Wedding Frame"
+      >
+
+    </section>
+
+    <section class="controls">
+
+      <button id="startCamera">
+        AKTIFKAN KAMERA
+      </button>
+
+      <button id="capture">
+        AMBIL FOTO
+      </button>
+
+    </section>
+
+    <canvas id="photoCanvas" hidden></canvas>
+
+  </main>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
