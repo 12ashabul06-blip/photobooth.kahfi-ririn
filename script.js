@@ -5,6 +5,7 @@ const canvas = document.getElementById("photoCanvas");
 const captureButton = document.getElementById("capture");
 const switchButton = document.getElementById("switchCamera");
 const saveButton = document.getElementById("savePhoto");
+const retakeButton = document.getElementById("retakePhoto");
 const status = document.getElementById("status");
 
 let stream = null;
@@ -104,7 +105,9 @@ function capturePhoto() {
     preview.hidden = false;
     camera.style.visibility = "hidden";
     saveButton.disabled = false;
-    showStatus("Preview foto siap. Tekan tombol tengah untuk foto ulang atau panah kiri untuk menyimpan.");
+    switchButton.hidden = true;
+retakeButton.hidden = false;
+    showStatus("Preview foto siap. Tekan Foto Ulang untuk mengambil kembali atau Simpan untuk mengunduh.");
   }, "image/png");
 }
 
@@ -123,6 +126,25 @@ function savePhoto() {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
   showStatus("Foto siap disimpan.");
 }
+function resetPreview() {
+  if (previewUrl) {
+    URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+  }
+
+  preview.removeAttribute("src");
+  preview.hidden = true;
+
+  camera.style.visibility = "visible";
+
+  photoBlob = null;
+  saveButton.disabled = true;
+
+  switchButton.hidden = false;
+  retakeButton.hidden = true;
+
+  showStatus("Kamera siap. Ambil foto kembali.");
+}
 
 captureButton.addEventListener("click", () => {
   if (previewUrl) {
@@ -140,6 +162,7 @@ captureButton.addEventListener("click", () => {
 switchButton.addEventListener("click", switchCamera);
 saveButton.addEventListener("click", savePhoto);
 window.addEventListener("pagehide", stopCamera);
+retakeButton.addEventListener("click", resetPreview);
 
 // Kamera diminta aktif otomatis saat halaman dibuka.
 startCamera();
