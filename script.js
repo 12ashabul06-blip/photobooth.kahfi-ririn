@@ -88,6 +88,23 @@ function showStatus(message) {
   status.textContent = message;
 }
 
+function positionCameraForStep() {
+  camera.style.position = "absolute";
+  camera.style.width = "86%";
+  camera.style.height = currentStep === 1 ? "29.8%" : "32.5%";
+  camera.style.left = "7%";
+  camera.style.top = currentStep === 1 ? "10.4%" : "41%";
+  camera.style.objectFit = "cover";
+  camera.style.zIndex = "2";
+
+  // Foto hasil harus berada di atas kamera
+  topPhoto.style.zIndex = "3";
+  bottomPhoto.style.zIndex = "3";
+
+  // Bingkai tetap dipertahankan
+  frame.style.zIndex = "1";
+}
+
 // SWITCH CAMERA BUTTON
 const switchButton = document.createElement("button");
 switchButton.textContent = "GANTI KAMERA";
@@ -121,7 +138,8 @@ async function startCamera() {
 
     camera.srcObject = cameraStream;
     await camera.play();
-
+positionCameraForStep();
+     
     showStatus("Kamera berhasil diaktifkan.");
 
     startButton.textContent = "KAMERA AKTIF";
@@ -211,8 +229,16 @@ async function capturePhoto() {
     topPhoto.style.display = "block";
 
     currentStep = 2;
-    showStatus("Foto pertama berhasil! Sekarang ambil foto kedua.");
-    captureButton.textContent = "AMBIL FOTO KEDUA";
+
+// Tampilkan hasil foto pertama
+topPhoto.src = photoTop;
+topPhoto.style.display = "block";
+
+// Pindahkan kamera ke Frame 2
+positionCameraForStep();
+
+showStatus("Foto pertama berhasil! Silakan foto kedua.");
+captureButton.textContent = "AMBIL FOTO KEDUA";
 
   } else {
     photoBottom = photoData;
