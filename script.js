@@ -88,7 +88,15 @@ function capturePhoto() {
   canvas.height = height;
   const ctx = canvas.getContext("2d");
 
+  if (facingMode === "user") {
+  ctx.save();
+  ctx.translate(width, 0);
+  ctx.scale(-1, 1);
   drawCover(ctx, camera, width, height);
+  ctx.restore();
+} else {
+  drawCover(ctx, camera, width, height);
+}
 
   if (frame.complete && frame.naturalWidth > 0) {
     ctx.drawImage(frame, 0, 0, width, height);
