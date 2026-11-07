@@ -94,7 +94,7 @@ function positionCameraForStep() {
   camera.style.height = currentStep === 1 ? "29.8%" : "32.5%";
   camera.style.left = "7%";
   camera.style.top = currentStep === 1 ? "10.4%" : "41%";
-  camera.style.objectFit = "cover";
+  camera.style.objectFit = "contain";
   camera.style.zIndex = "2";
 
   // Foto hasil harus berada di atas kamera
@@ -217,9 +217,15 @@ async function capturePhoto() {
     sy = (camera.videoHeight - sh) / 2;
   }
 
-  ctx.translate(1080, 0);
-  ctx.scale(-1, 1);
-  ctx.drawImage(camera, sx, sy, sw, sh, 0, 0, 1080, 1920);
+  ctx.drawImage(
+  camera,
+  0, 0,
+  camera.videoWidth,
+  camera.videoHeight,
+  0, 0,
+  shotCanvas.width,
+  shotCanvas.height
+);
 
   const photoData = shotCanvas.toDataURL("image/jpeg", 0.95);
 
