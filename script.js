@@ -88,14 +88,27 @@ function capturePhoto() {
   canvas.height = height;
   const ctx = canvas.getContext("2d");
 
-  if (facingMode === "user") {
-  ctx.save();
-  ctx.translate(width, 0);
-  ctx.scale(-1, 1);
-  drawCover(ctx, camera, width, height);
-  ctx.restore();
-} else {
-  drawCover(ctx, camera, width, height);
+drawCover(ctx, camera, width, height);
+
+if (facingMode === "user") {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const rowSize = width * 4;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width / 2; x++) {
+      const left = y * rowSize + x * 4;
+      const right = y * rowSize + (width - 1 - x) * 4;
+
+      for (let c = 0; c < 4; c++) {
+        const temp = data[left + c];
+        data[left + c] = data[right + c];
+        data[right + c] = temp;
+      }
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
 }
 
   if (frame.complete && frame.naturalWidth > 0) {
