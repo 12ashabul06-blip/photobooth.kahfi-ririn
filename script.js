@@ -35,6 +35,7 @@ async function startCamera() {
       }
     });
     camera.srcObject = stream;
+    camera.classList.toggle("camera-mirror", facingMode === "user");
     await camera.play();
     showStatus("Kamera siap. Tekan tombol tengah untuk mengambil foto.");
   } catch (error) {
