@@ -31,7 +31,7 @@ topPhoto.style.cssText = `
   top:10.4%;
   width:86%;
   height:29.8%;
-  object-fit:cover;
+  object-fit:contain;
   display:none;
   z-index:3;
 `;
@@ -44,7 +44,7 @@ bottomPhoto.style.cssText = `
   top:41%;
   width:86%;
   height:32.5%;
-  object-fit:cover;
+  object-fit:contain;
   display:none;
   z-index:3;
 `;
