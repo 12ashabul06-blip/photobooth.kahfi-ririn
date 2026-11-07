@@ -149,3 +149,7 @@ body {
   .round-control { width: 42px; height: 42px; }
   .status { bottom: calc(max(10px, env(safe-area-inset-bottom)) + 64px); }
 }
+#retakePhoto[hidden],
+#switchCamera[hidden] {
+  display: none !important;
+}
